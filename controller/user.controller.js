@@ -7,11 +7,13 @@ class UserController {
         res.json(newUser.rows[0])
     }
     async getUsers (req, res) {
-        const newUser = await db.query(`SELECT * FROM users`);
-        res.json(newUser.rows)
+        const users = await db.query(`SELECT * FROM users`);
+        res.json(users.rows)
     }
     async getUser (req, res) {
-
+        const id = req.params.id;
+        const user = await db.query(`SELECT * FROM users WHERE id = ${id}`);
+        res.json(user.rows[0]);
     }
     async updateUser (req, res) {
 
