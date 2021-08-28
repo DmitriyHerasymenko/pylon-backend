@@ -16,7 +16,7 @@ class AuthController {
         try{
             const errors = validationResult(req);
              if(!errors.isEmpty()) {
-                 return res.status(400).json({message: errors})
+                 return res.status(400).json({message: errors.errors[0].msg})
              }
             const {name, mail, password} = req.body;
             const users = await db.query(`SELECT * FROM person`);
@@ -38,11 +38,11 @@ class AuthController {
         try{
             const {name, mail, password} = req.body;
             const users = await db.query(`SELECT * FROM person`);
+            const usersCheck = await db.query(`SELECT * FROM person WHERE name = ${name}`);
             const checkName = users.rows.find(user => user.name === name);
             if(!checkName) {
                 return res.status(400).json({message: `User ${name} not found`})
-            };
-
+            }
             const validPassword = bcrypt.compareSync(password, checkName.password);
             if(!validPassword)  {
                 return res.status(400).json({message: 'error password'})
@@ -52,6 +52,15 @@ class AuthController {
         } catch (e) {
             console.log(e)
             res.status(400).json({message: 'Login error'})
+        }
+    }
+
+    async getUsers(req, res) {
+        try{
+            const users = await db.query(`SELECT * FROM person`);
+            return res.json(users.rows)
+        } catch (e) {
+            console.log(e)
         }
     }
 }
