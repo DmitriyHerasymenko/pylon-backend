@@ -1,6 +1,7 @@
 const Router = require('express');
 const router = new Router();
 const AuthController = require('../controller/auth.controller');
+const UserController = require('../controller/user.controller')
 const bcrypt = require('bcryptjs');
 const {check, validationResult} = require("express-validator");
 const authMiddleware = require('../middlewaree/authMiddlewaree');
@@ -21,7 +22,7 @@ const registration = async (req, res) => {
             return res.status(400).json({message: errors.errors[0].msg})
         }
         const {name, mail, password} = req.body;
-        const users = await AuthController.getUsers();
+        const users = await UserController.getUsers();
         const checkName = users.rows.find(user => user.name === name);
         if(checkName) {
             return res.status(400).json({message: 'user name already exist'})
@@ -39,7 +40,7 @@ const registration = async (req, res) => {
 const login = async (req, res) => {
     try{
         const {name, mail, password} = req.body;
-        const users = await AuthController.getUsers();
+        const users = await UserController.getUsers();
         const checkName = users.rows.find(user => user.name === name);
         if(!checkName) {
             return res.status(400).json({message: `User ${name} not found`})
@@ -58,7 +59,7 @@ const login = async (req, res) => {
     }
 };
 
-router.post('/registration',[
+router.post('/register',[
     check('name', 'Username did not empty').notEmpty(),
     check('mail', 'Mail did not empty').notEmpty(),
     check('password', 'Password must be have  min 4 max 10 symbols').isLength({min:4, max:10})
