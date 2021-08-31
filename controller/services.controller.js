@@ -11,6 +11,10 @@ class ServicesController {
     async getServices() {
         return await db.query(`SELECT * from services`)
     }
+    async getServicesByName(name) {
+      return await db.query(`SELECT * from services WHERE "name" = '${name}'`)
+
+    }
 }
 
 module.exports = new ServicesController();

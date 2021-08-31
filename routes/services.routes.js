@@ -13,10 +13,8 @@ const createServices = async (req, res) => {
         }
         const {name, user_id} = req.body;
         const apikey = uuidAPIKey.create();
-        const services = await servicesController.getServices();
-        const chekName = services.rows.find(services => services.name === name);
-        if(chekName) res.status(400).json({message: 'this services name already exist'})
-        console.log("services", services.rows)
+        const services = await servicesController.getServicesByName(name);
+        if(services.rows.length !== 0) return res.status(400).json({message: 'this services name already exist'})
         const newServices = await servicesController.createService(name, apikey.apiKey, user_id);
         res.json(newServices.rows)
 
